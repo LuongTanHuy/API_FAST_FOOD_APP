@@ -1,0 +1,442 @@
+<div th:fragment="productBody" class="app-content">
+    <div class="app-content-header">
+        <h1 class="app-content-headerText text-uppercase fst-italic fs-5">Danh sách sản phẩm</h1>
+        <button class="mode-switch" title="Switch Theme">
+        </button>
+        <button type="button" style="background-color: #34ce57" class="app-content-headerButton" data-bs-toggle="modal"
+                data-bs-target="#exampleModal">
+            <i class="fas fa-plus" style="color: #ffffff;"></i> Món Ăn
+        </button>
+        <button type="button" class="app-content-headerButton" data-bs-toggle="modal" data-bs-target="#category">
+            <i class="fas fa-plus" style="color: #ffffff;"></i> Danh Mục
+        </button>
+    </div>
+    <div class="app-content-actions">
+        <form action="/FastFood/searchProduct" method="post">
+            <input class="search-bar" placeholder="Tìm Kiếm..." name="search" type="text"/>
+        </form>
+    </div>
+
+    <!--    <div class="col-lg-12" style="display: flex;flex-direction: row; justify-content: center; margin-top: 10px;">-->
+    <!--        <div class="col-5" style="justify-items: center; margin-left: -70px; border-radius: 10px; ">-->
+    <!--            <img th:src="${account.storeModel.image}" class="mx-auto d-block" width="522" height="235"  style="border-radius: 10px; margin-top: 7px; margin-left: 10px !important;">-->
+    <!--        </div>-->
+    <!--        <div class="col-6" style=" width: 670px;display: flex;flex-direction: column;color: #ffffff; margin-left: 30px; background-color: #978ee4; border-radius: 10px;" >-->
+    <!--            <div class="col-12" style="margin-top: 20px; margin-left: 25px;" >-->
+    <!--                <p style="color: #edff48; font-weight: bold;" >Tên Quán:  <span style="color: #ffffff; font-weight: normal; margin-left: 50px; " th:text="${account.storeModel.name}"></span></p>-->
+    <!--                <p style="color: #e6ff00; font-weight: bold" > Địa Chỉ: <span style="color: #ffffff; font-weight: normal;margin-left: 65px; " th:text="${account.storeModel.address}"></span></p>-->
+    <!--                <p style="color: #e6ff00; font-weight: bold" >Email: <span style="color: #ffffff; font-weight: normal; margin-left: 80px;  " th:text="${account.storeModel.email}"></span></p>-->
+    <!--                <p style="color: #e6ff00; font-weight: bold" >Số Điện Thoại: <span style="color: #ffffff; font-weight: normal; margin-left: 17px;  " th:text="${account.storeModel.phone}"></span></p>-->
+    <!--                <div class="col-6" style="margin-top: 30px; justify-content: center;" >-->
+    <!--                    <button type="button" class="app-content-headerButton" style="margin-left:-2px; background-color: #6630a8!important; " data-bs-toggle="modal" data-bs-target="#exampleModal4">-->
+    <!--                        <i class="far fa-edit"></i>-->
+    <!--                        Cập nhật-->
+    <!--                    </button>-->
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--        &lt;!&ndash; Cập nhật thông tin cửa hàng &ndash;&gt;-->
+    <!--        <div class="modal fade" id="exampleModal4" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">-->
+    <!--            <div class="modal-dialog">-->
+    <!--                <div class="modal-content" style="background-color: rgb(238, 239, 255);">-->
+    <!--                    <div class="modal-header">-->
+    <!--                        <h1 class="modal-title fs-5" style="color:#777777" >Thông Tin Cửa Hàng</h1>-->
+    <!--                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+    <!--                    </div>-->
+    <!--                    <div class="modal-body">-->
+    <!--                        <form class="row g-3 needs-validation" novalidate action="/FastFood/updateStore" method="post"-->
+    <!--                              enctype="multipart/form-data">-->
+    <!--                            <div class="md-3">-->
+    <!--                                <img th:src="${account.storeModel.image}" width="465" height="200" style=" border-radius: 10px; margin-bottom: 15px;">-->
+    <!--                                <input type="file" name="file" class="form-control" style="border: 1px solid #ffa15e;">-->
+    <!--                                <input hidden="hidden" name="id" th:value="${account.storeModel.id}">-->
+    <!--                            </div>-->
+    <!--                            <div class="md-3">-->
+    <!--                                <input type="text" class="form-control" name="name" th:value="${account.storeModel.name}" style="border: 1px solid #ffa15e;"-->
+    <!--                                >-->
+    <!--                            </div>-->
+    <!--                            <div class="md-3">-->
+    <!--                                <input type="text" class="form-control" name="address" th:value="${account.storeModel.address}"-->
+    <!--                                       style="border: 1px solid #ffa15e;" >-->
+    <!--                            </div>-->
+    <!--                            <div class="md-3">-->
+    <!--                                <input type="text" class="form-control" name="email" th:value="${account.storeModel.email}"-->
+    <!--                                       style="border: 1px solid #ffa15e;" >-->
+    <!--                            </div>-->
+    <!--                            <div class="md-3">-->
+    <!--                                <input type="text" class="form-control" name="phone" th:value="${account.storeModel.phone}"-->
+    <!--                                       style="border: 1px solid #ffa15e;" >-->
+
+    <!--                            </div><br/>-->
+    <!--                            <button type="submit" class="btn btn-success" style="width: 465px; margin-left: 7px; " ><i class="fas fa-pen" style="color: #ffffff;"></i> Cập nhật </button>-->
+    <!--                        </form>-->
+    <!--                    </div>-->
+    <!--                    <div class="modal-footer">-->
+    <!--                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal"><i class="bi bi-x-circle" style="font-style: normal;" ><span style="margin-left: 5px; " >Đóng</span></i></button>-->
+    <!--                    </div>-->
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--    </div>-->
+
+    <div class="category-container" style="display: flex; flex-wrap: wrap; gap: 10px;margin-bottom: 20px ">
+        <div th:each="category : ${listCategory}">
+            <form action="/FastFood/searchProductOfTheSameType" method="post">
+                <input th:value="${category.id}" name="id_category" hidden="hidden"/>
+                <div class="products-area-wrapper tableView">
+                    <button type="submit" class="btn btn-success w-100" style="background-color: #34ce57"><span
+                            th:text="${category.category}"></span> <i class="fas fa-hand-point-up"
+                                                                      style="color: #ffffff;"></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!--Món ăn-->
+    <div class="table-responsive-xl ">
+        <table class="table table-borderless table-hover">
+            <thead>
+            <tr class="text-center">
+                <th scope="col" class="titleColor text-center"></th>
+                <th scope="col" class="titleColor text-center">Thông tin</th>
+                <th scope="col" class="titleColor text-center">Số lượng đã bán</th>
+                <th scope="col" class="titleColor text-center">Doanh thu</th>
+                <th scope="col" class="titleColor text-center">Tùy chỉnh</th>
+            </tr>
+            </thead>
+            <tbody class="table-group-divider align-middle">
+            <tr th:each="product : ${listProduct}">
+                <th class="rowColor" scope="row">
+                    <img class="food-image" th:src="${product.image}" alt="product"/>
+                </th>
+                <td class="rowColor fs-6">
+                    <p class="text-start" th:text="${'Danh Mục: '+product.categoryModel.category}"></p>
+                    <p class="text-start" th:text="${'Tên Món: '+product.name}"></p>
+                    <p class="text-start" th:text="${'Giá gốc: '+ product.price +'00 VNĐ'}"></p>
+                    <p class="text-start"
+                       th:text="${'Giảm Giá: '+product.categoryModel.sale +' % chỉ còn '+(product.price - ((product.categoryModel.sale*0.01)*product.price))+'00 VNĐ'}"></p>
+                </td>
+                <td class="rowColor">
+                   <span th:text="${product.totalProductSold}"></span>
+                </td>
+                <td class="rowColor">
+                    <span th:text="${product.totalRevenue}+' VNĐ'"></span>
+                </td>
+                <td class="rowColor">
+                    <div class="action d-flex justify-content-center align-items-center">
+                        <button type="button" data-bs-toggle="modal" th:data-bs-target="@{'#'+ ${product.id}}"
+                                class="btn btn-danger rounded-circle"
+                                style="margin-right: 10px;display: inline-flex; align-items: center; padding: 9px; ">
+                            <i class="bi bi-pencil-square fa-sm" style="vertical-align: middle; line-height: 1;"></i>
+                        </button>
+                        <button type="button" data-bs-toggle="modal" th:data-bs-target="@{'#status'+ ${product.id}}"
+                                class="btn btn-success rounded-circle"
+                                style="display: inline-flex; align-items: center; padding: 5px 8px;color:#ffffff;">
+                         <span th:if="${product.status} == '1'">
+                               <i class="fas fa-eye fa-sm" style="vertical-align: middle; line-height: 1;"></i>
+                         </span>
+                            <span th:if="${product.status} == '0'">
+                               <i class="fas fa-eye-slash fa-sm" style="vertical-align: middle; line-height: 1;"></i>
+                         </span>
+
+                        </button>
+                    </div>
+                    <!-- Edit product-->
+                    <div class="modal fade" th:id="${product.id}" tabindex="-1" aria-labelledby="exampleModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog" style="margin-top: 10px;">
+                            <div class="modal-content" style="background-color: rgb(238, 239, 255);">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5 text-uppercase fst-italic" style="color:#062516">Cập
+                                        Nhật Thông Tin Món</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="row g-3 needs-validation" novalidate action="/FastFood/updateProduct"
+                                          method="post"
+                                          enctype="multipart/form-data">
+                                        <div class="md-3">
+                                            <input name="id_product" th:value="${product.id}" hidden="hidden">
+                                            <input type="file" name="file" class="form-control"
+                                                   style="border: 1px solid #ffa15e; ">
+                                        </div>
+                                        <div class="md-3 ">
+                                            <img th:src="${product.image}" style="width:250px;height: 130px "
+                                                 class="mx-auto d-block">
+                                        </div>
+                                        <div class="md-3">
+                                            <label class="form-label" style="color:#0b2e13">Tên Món</label>
+                                            <input type="text" class="form-control" name="name"
+                                                   th:value="${product.name}"
+                                                   style="border: 1px solid #ffa15e;" placeholder="Nhập tên món ăn..."/>
+                                        </div>
+                                        <div class="md-3">
+                                            <label class="form-label" style="color:#0b2e13;">Giá</label>
+                                            <input type="numeric" class="form-control" name="price"
+                                                   th:value="${product.price+'00'}" style="border: 1px solid #ffa15e;"
+                                                   placeholder="Nhập giá gốc..."/>
+                                        </div>
+                                        <label class="form-label" style="color:#0b2e13  ">Danh Mục</label>
+                                        <select name="id_category" class=" custom-select" style="margin-top: 1px;">
+                                            <option th:each="category : ${listCategory}"
+                                                    th:value="${category.id}"
+                                                    th:text="${category.category}"
+                                                    th:selected="${product.categoryModel.id} == ${category.id}">
+                                            </option>
+                                        </select>
+                                        <button type="submit" style="width: 465px; margin-left: 7px; margin-top: 25px; "
+                                                class="btn btn-success">
+                                            <span>Sửa <i class="fas fa-pen fa-sm" style="color:#ffffff"></i></span>
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                                        <span>Đóng <i class="bi bi-x-circle fa-sm" style="color:#ffffff"></i></span>
+                                    </button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Change Status Product-->
+                    <div class="modal fade" th:id="@{'status'+ ${product.id}}" data-bs-backdrop="static"
+                         data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="staticBackdropLabel">Nhắc Nhở </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body text-center text-black-1000">
+                                    Thao tác này có thể khiến sản phẩm Bị ẩn hoặc Xuất Hiện trở lại !
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Quay Lại
+                                    </button>
+                                    <button type="button" class="btn btn-primary">
+                                        <a th:href="|changeStatusProduct/${product.id}|">
+                                            Có
+                                        </a></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Add Product-->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="margin-top: 40px;">
+            <div class="modal-content" style="color:#777777">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-uppercase fst-italic" id="exampleModalLabel"
+                        style="color: #0e1120">Thêm Món</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="row g-3 needs-validation" novalidate action="/FastFood/addProduct" method="post"
+                          enctype="multipart/form-data">
+                        <div class="md-3">
+                            <label class="form-label" style="color:#0b2e13;">Chọn ảnh</label>
+                            <input type="file" name="file" class="form-control" style="border: 1px solid #ffa15e;">
+                        </div>
+                        <div class="md-3">
+                            <label class="form-label" style="color:#0b2e13;">Tên món</label>
+                            <input type="text" class="form-control" name="name" style="border: 1px solid #ffa15e;"
+                                   placeholder="Nhập tên món ăn...">
+                        </div>
+                        <div class="md-3">
+                            <label class="form-label" style="color:#0b2e13;">Giá gốc</label>
+                            <input type="double" class="form-control" name="price"
+                                   style="border: 1px solid #ffa15e;" placeholder="Nhập giá gốc...">
+                        </div>
+                        <label class="form-label" style="color:#0b2e13;">Danh mục món</label>
+                        <select name="id_category" class=" custom-select" style="color: #777777; margin-bottom: 10px;">
+                            <option th:each="category : ${allCategory}"
+                                    th:value="${category.id}"
+                                    th:text="${category.category}">
+                            </option>
+                        </select>
+
+                        <button type="submit" class="btn btn-success"> Thêm <i class="fas fa-plus fa-sm"
+                                                                               style="color: #ffffff;"></i></button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                        <span>Đóng <i class="bi bi-x-circle fa-sm" style="color:#ffffff"></i></span>
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Add category-->
+    <div class="modal fade" id="category" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="margin-top: 30px;">
+            <div class="modal-content" style="color:#777777">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-uppercase fst-italic" style="color: #0e1120">Thêm Danh Mục</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="col-10" style="margin-left: 20px; margin-top: 15px; ">
+                    <table class="table" style="width: 460px;">
+                        <div class="products-area-wrapper tableView " style="width: 463px;">
+                            <div class="products-header col-12" style="margin-left: -4px;">
+                                <div class="product-cell discount d-flex justify-content-center align-items-center col-6">
+                                    <span>Danh Mục</span>
+                                </div>
+                                <div class="product-cell action col-6">
+                                    <span>Tùy chỉnh</span>
+                                </div>
+                            </div>
+                            <tbody th:each="category : ${allCategory}">
+                            <tr>
+                                <th scope="row" class="col-6 text-center" th:text="${category.category}"
+                                    style="font-weight: normal;"></th>
+                                <td class="col-6">
+                                    <div class="action d-flex justify-content-center align-items-center">
+                                        <button type="button" data-bs-toggle="modal"
+                                                th:data-bs-target="@{'#editCategory'+ ${category.id}}"
+                                                class="btn btn-danger rounded-circle"
+                                                style="margin-right: 10px;display: inline-flex; align-items: center; padding: 9px;color:#ffffff;">
+                                            <i class="bi bi-pencil-square fa-sm"
+                                               style="vertical-align: middle; line-height: 1;"></i>
+                                        </button>
+                                        <button type="button" data-bs-toggle="modal"
+                                                th:data-bs-target="@{'#statusCategory'+ ${category.id}}"
+                                                class="btn btn-success rounded-circle fa-sm"
+                                                style="display: inline-flex; align-items: center; padding: 6px 9px;color:#ffffff;">
+                                                     <span th:if="${category.status} == '1'">
+                                                     <i class="fas fa-eye fa-sm"
+                                                        style="vertical-align: middle; line-height: 1;"></i>
+                                                    </span>
+                                            <span th:if="${category.status} == '0'">
+                                                     <i class="fas fa-eye-slash fa-sm"
+                                                        style="vertical-align: middle; line-height: 1;"></i>
+                                                    </span>
+                                        </button>
+                                    </div>
+                                </td>
+
+                            </tr>
+                            </tbody>
+                        </div>
+                    </table>
+                </div>
+                <div class="modal-body">
+                    <form class="row g-3 needs-validation" novalidate action="/FastFood/addCategory" method="post"
+                          enctype="multipart/form-data">
+                        <div class="md-3">
+                            <label class="form-label" style="color:#0b2e13;">Loại danh mục món</label>
+                            <input type="text" th:value="${account.storeModel.id}" name="id_store" hidden="hidden">
+
+                            <input type="text" class="form-control" name="category"
+                                   style="border: 1px solid #ffa15e;" placeholder="Nhập loại danh mục...">
+                        </div>
+                        <div class="md-3">
+                            <label class="form-label" style="color:#0b2e13">Loại phiếu giảm giá</label>
+                            <input type="number" class="form-control" name="sale" style="border: 1px solid #ffa15e;"
+                                   placeholder="Nhập phiếu giảm giá...">
+                        </div>
+                        <button type="submit" class="btn btn-success"
+                                style="width: 467px; margin-left: 7px; margin-top: 30px;">Thêm <i
+                                class="fas fa-plus fa-sm" style="color: #ffffff;"></i></button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng <i
+                            class="bi bi-x-circle fa-sm" style="color:#ffffff"> </i></button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Pop-Up-->
+    <div th:each="category : ${allCategory}">
+        <!-- Edit Category-->
+        <div class="modal fade" th:id="${'editCategory'+category.id}" tabindex="-1"
+             aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" style="margin-top: 10px;">
+                <div class="modal-content"
+                     style="background-color: rgb(238, 239, 255);">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" style="color:#062516">Cập Nhật
+                            Danh Mục</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="row g-3 needs-validation" novalidate
+                              action="/FastFood/updateCategory"
+                              method="post"
+                              enctype="multipart/form-data">
+                            <div class="md-3">
+                                <input name="id_category" th:value="${category.id}"
+                                       hidden="hidden">
+                                <label class="form-label" style="color:#0b2e13">Danh Mục</label>
+                                <input type="text" class="form-control" name="category"
+                                       th:value="${category.category}"
+                                       style="border: 1px solid #ffa15e;"
+                                       placeholder="Nhập danh mục..."/>
+                            </div>
+                            <div class="md-3">
+                                <label class="form-label" style="color:#0b2e13">Giảm Giá</label>
+                                <input type="number" class="form-control" name="sale"
+                                       th:value="${category.sale}"
+                                       style="border: 1px solid #ffa15e;"
+                                       placeholder="Giảm giá...%"/>
+                            </div>
+                            <button type="submit"
+                                    style="width: 465px; margin-left: 7px; margin-top: 25px; "
+                                    class="btn btn-success">
+                                <span style="margin-left: 5px; ">Cập Nhật</span>
+                                <i class="fas fa-pen fa-sm" style="color:#ffffff"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger"
+                                data-bs-dismiss="modal"><i class="fas fa-calendar-times "
+                                                           style="font-style: normal;"><span
+                                style="margin-left: 5px; ">Đóng</span></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Change Status Category-->
+        <div class="modal fade" th:id="@{'statusCategory'+ ${category.id}}"
+             data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+             aria-labelledby="staticBackdropLabel2" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel2">Nhắc Nhở </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center text-black-1000">
+                        Thao tác này có thể khiến Danh Mục và Sản Phẩm Bị ẩn hoặc Xuất Hiện trở lại
+                        !
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary"
+                                data-bs-dismiss="modal">Quay Lại
+                        </button>
+                        <button type="button" class="btn btn-primary">
+                            <a th:href="|changeStatusCategory/${category.id}|">
+                                Có
+                            </a></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

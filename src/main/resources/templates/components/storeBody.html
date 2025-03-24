@@ -1,0 +1,148 @@
+<div th:fragment="storeBody" class="app-content">
+  <div class="app-content-header">
+    <h1 class="app-content-headerText text-uppercase fst-italic fs-5">Danh sách cửa hàng</h1>
+    <button type="button" class="app-content-headerButton" data-bs-toggle="modal" data-bs-target="#storeListModal">
+      <i class="fas fa-comments" style="color: #ffffff;"></i> Yêu cầu mở shop
+    </button>
+
+    <!-- Modal danh sách cửa hàng -->
+    <div class="modal fade" id="storeListModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="storeListModalLabel">Danh sách cửa hàng</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <ul class="list-group" th:each="newStore : ${listRequestOpenStore}">
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <img th:src="${newStore.storeModel.image}" alt="Cửa hàng A" class="store-avatar" style="max-width: 50px;min-height: 50px">
+                <span th:text="'Cửa Hàng: ' + ${newStore.storeModel.name}"></span>
+                <button class="btn btn-info btn-sm"
+                        th:data-avatar="${newStore.storeModel.image}"
+                        th:data-name="${newStore.storeModel.name}"
+                        th:data-address="${newStore.storeModel.address}"
+                        th:data-phone="${newStore.storeModel.phone}"
+                        th:data-email="${newStore.storeModel.email}"
+                        th:data-idAccount="${newStore.id}"
+                        onclick="showStoreDetails(this)">
+                  <i class="far fa-eye" style="color: #ffffff;"></i>
+                </button>
+              </li>
+            </ul>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng <i class="fas fa-times-circle fa-sm" style="color: #ffffff;"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal thông tin cửa hàng -->
+    <div class="modal fade" id="storeDetailModal" tabindex="-1" aria-labelledby="storeDetailModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="storeDetailModalLabel">Thông tin chi tiết</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="text-center">
+              <img id="storeDetailAvatar" src="" alt="Avatar cửa hàng" class="store-detail-avatar" style="max-width: 400px;border-radius: 10px;margin-bottom: 10px">
+            </div>
+            <p><strong>Cửa Hàng: </strong><span id="storeDetailName"></span></p>
+            <p><strong>Địa Chỉ: </strong> <span id="storeDetailAddress"></span></p>
+            <p><strong>Số điện thoại:</strong> <span id="storeDetailPhone"></span></p>
+            <p><strong>Email:</strong> <span id="storeDetailEmail"></span></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-success" id="agreeButton">Đồng ý <i class="fas fa-check-circle fa-sm" style="color: #ffffff;"></i></button>
+            <button type="button" class="btn btn-danger" id="notAgreeButton" data-bs-dismiss="modal">Không <i class="fas fa-times-circle fa-sm" style="color: #ffffff;"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function showStoreDetails(button) {
+        const avatar = button.getAttribute('data-avatar');
+        const name = button.getAttribute('data-name');
+        const address = button.getAttribute('data-address');
+        const phone = button.getAttribute('data-phone');
+        const email = button.getAttribute('data-email');
+        const idAccount = button.getAttribute('data-idAccount');
+
+        document.getElementById('storeDetailAvatar').src = avatar;
+        document.getElementById('storeDetailName').innerText = name;
+        document.getElementById('storeDetailAddress').innerText = address;
+        document.getElementById('storeDetailPhone').innerText = phone;
+        document.getElementById('storeDetailEmail').innerText = email;
+
+        document.getElementById('agreeButton').setAttribute('onclick', `window.location.href='agreeOpenStore/${idAccount}'`);
+        document.getElementById('notAgreeButton').setAttribute('onclick', `window.location.href='NotAgreeOpenStore/${idAccount}'`);
+
+        var storeDetailModal = new bootstrap.Modal(document.getElementById('storeDetailModal'));
+        storeDetailModal.show();
+      }
+    </script>
+  </div>
+  <div class="app-content-actions">
+    <form action="/FastFood/searchStore" method="get">
+      <input class="search-bar" placeholder="Tìm kiếm..." name="search" type="text"/>
+    </form>
+
+    <div class="app-content-actions-wrapper"></div>
+  </div>
+  <!-- Thông tin cửa hàng -->
+  <div class="table-responsive-xl ">
+    <table class="table table-borderless table-hover">
+      <thead>
+      <tr class="text-center">
+        <th scope="col" class="titleColor text-center">Ảnh</th>
+        <th scope="col" class="titleColor text-center">Thông tin </th>
+        <th scope="col" class="titleColor text-center">Danh mục kinh doanh</th>
+        <th scope="col" class="titleColor text-center">Tổng sản phẩm đã bán</th>
+        <th scope="col" class="titleColor text-center">Doanh thu</th>
+      </tr>
+      </thead>
+      <tbody class="table-group-divider align-middle">
+      <tr th:each="store : ${listStore}">
+        <th class="rowColor" scope="row">
+          <img class="account-image" alt="image store" style="width: 160px; height: 70px;" th:src="${store.image}"   />
+        </th>
+        <td class="rowColor fs-6">
+          <p class="text-start" th:text="${'Tên cửa hàng: '+store.name}"></p>
+          <p class="text-start" th:text="${'Địa chỉ: '+store.address}"></p>
+          <p class="text-start" th:text="${'Email: '+store.email}"></p>
+          <p class="text-start" th:text="${'Số điện thoại: '+store.phone}"></p>
+          <p class="text-start" th:text="${'Ngày tạo: '+store.created_at}"></p>
+        </td>
+        <td class="rowColor">
+          <select name="" class="form-select text-center fs-6 overflow-auto" multiple aria-label="multiple select example">
+            <option th:each="category : ${store.listCategory}" th:value="${category}" th:text="${category}" ></option>
+          </select>
+        </td>
+        <td class="rowColor">
+          <span th:text="${store.totalOrdersSold}"></span>
+        </td>
+        <td class="rowColor">
+          <span th:text="${store.revenue+' VNĐ'}"></span>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="position-relative" th:if="${size != nul}">
+    <div class="btn-toolbar position-absolute top-100 start-50 translate-middle" role="toolbar" aria-label="Toolbar with button groups">
+      <div class="btn-group me-2" role="group" aria-label="First group">
+        <button type="button" class="btn btn-primary" th:if="${page > 0}">
+          <a th:href="|store?page=${page - 1}|" ><i class="fas fa-long-arrow-alt-left" style="color: #ffffff;"></i></a>
+        </button>
+        <button type="button" class="btn btn-primary"><span th:text="${page}"></span></button>
+        <button type="button" class="btn btn-primary" th:if="${page < totalPages - 1}">
+          <a th:href="|store?page=${page + 1}|" ><i class="fas fa-long-arrow-alt-right" style="color: #ffffff;"></i></a>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

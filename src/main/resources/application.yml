@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3307/app_android?useSSL=false
+    hikari:
+      username: root
+      password:
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+server:
+  enable-csrf: false
+  enable-cors: false
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        secure: true
+        max-age: 1800

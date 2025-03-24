@@ -1,0 +1,234 @@
+<div th:fragment="BotChatBody" class="app-contentt" style="background: #101827 !important;">
+    <div class="app-content-header">
+        <h1 class="app-content-headerText text-uppercase fst-italic fs-5" style="color: #ffffff !important;">Train Bot Chat</h1>
+    </div>
+
+    <div id="chat-container"></div>
+    <div id="chat-question">
+        <input type="text" id="question" placeholder="Nhập câu hỏi ở đây..." />
+        <button id="submit"><i class="fas fa-paper-plane"></i></button>
+    </div>
+
+    <script type="importmap">
+        {
+          "imports": {
+            "@google/generative-ai": "https://esm.run/@google/generative-ai"
+          }
+        }
+    </script>
+    <script type="module">
+
+        import { GoogleGenerativeAI } from "@google/generative-ai";
+
+        const API_KEY = "AIzaSyD6W50K90r2pe8e_j9HCvSrAY8jVcvmRTs";
+        const genAI = new GoogleGenerativeAI(API_KEY);
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+        const generationConfig = {
+            temperature: 0.5,
+            topP: 0.95,
+            topK: 64,
+            maxOutputTokens: 8192,
+            responseMimeType: "text/plain",
+        };
+
+        const historyAI = [];
+
+        const requestAgain = async function run2(param) {
+            const chatSession = model.startChat({
+                generationConfig,
+                history: historyAI,
+            });
+
+            const result = await chatSession.sendMessage(param);
+            return result.response;
+        }
+
+        const chatQuestion = document.getElementById('question');
+        const submitQuestion = document.getElementById('submit');
+
+        async function run() {
+            const chatSession = model.startChat({
+                generationConfig,
+                history: historyAI,
+            });
+
+            const result = await chatSession.sendMessage(chatQuestion.value);
+            addChat(chatQuestion.value, result.response.text());
+            chatQuestion.value = "";
+        }
+
+        submitQuestion.addEventListener("click", function() {
+            run();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatContainer = document.getElementById('chat-container');
+
+            function loadChats() {
+                fetch('http://localhost:8080/api/v1/chat-bot')
+                    .then(response => response.json())
+                    .then(data => {
+
+                        data.forEach(item => {
+                            historyAI.push({
+                                role: 'user',
+                                parts: [{ text: item.trainer }]
+                            });
+                            historyAI.push({
+                                role: 'model',
+                                parts: [{ text: item.model }]
+                            });
+                        });
+
+                        chatContainer.innerHTML = '';
+                        data.forEach(chat => {
+                            const chatElement = document.createElement('div');
+                            chatElement.classList.add('chat-element');
+
+                            // Chỉ tạo các phần tử div nếu trainer hoặc model không rỗng
+                            let trainerDiv = '';
+                            if (chat.trainer !== "") {
+                                trainerDiv = `
+                                  <div class="trainer">
+                                    <div class="header">
+                                        <div class="buttons">
+                                            <button onclick="updateChat(${chat.id},'question')"><i class="fas fa-edit fa-sm" style="color: #2af41a;"></i></button>
+                                            <button onclick="deleteChat(${chat.id},'question')"><i class="fas fa-trash fa-sm" style="color: #ff1616;"></i></button>
+                                        </div>
+                                            <p class="text-uppercase fst-italic fs-6">Trainer</p>
+                                    </div>
+                                            <textarea class="text" id="question${chat.id}">${chat.trainer}</textarea>
+                                    </div>
+                                `;
+                            }
+
+                            let modelDiv = '';
+                            if (chat.model !== "") {
+                                modelDiv = `
+                                  <div class="model">
+                                    <div class="header">
+                                        <div class="buttons">
+                                            <button onclick="updateChat(${chat.id},'answer')"><i class="fas fa-edit fa-sm" style="color: #2af41a;"></i></button>
+                                            <button onclick="deleteChat(${chat.id},'answer')"><i class="fas fa-trash fa-sm" style="color: #ff1616;"></i></button>
+                                            <button onclick="updateChat2(${chat.id},'answer')"><i class="fas fa-undo-alt fa-sm" style="color: #3e3e3e;"></i></button>
+                                        </div>
+                                        <p class="text-uppercase fst-italic fs-6">Model </p>
+                                    </div>
+                                    <textarea class="text" id="answer${chat.id}">${chat.model}</textarea>
+                                    </div>
+                                `;
+                            }
+
+                            // Chỉ thêm chatElement vào chatContainer nếu có nội dung trainerDiv hoặc modelDiv
+                            if (trainerDiv || modelDiv) {
+                                chatElement.innerHTML = trainerDiv + modelDiv;
+                                chatContainer.appendChild(chatElement);
+                            }
+                        });
+
+                    });
+            }
+
+            window.addChat = async function(trainer, model) {
+                try {
+                    const response = await fetch(`http://localhost:8080/api/v1/add-chat`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ trainer: trainer, model: model })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Error: ${response.statusText}`);
+                    }
+
+                    await loadChats(); // Đợi loadChats hoàn thành trước khi tiếp tục
+                    // Cuộn xuống cuối trang
+                    if (chatContainer.lastElementChild) {
+                        chatContainer.lastElementChild.scrollIntoView({ behavior: 'smooth' });
+                    }
+                    getHistory();
+
+                } catch (error) {
+                    console.error('Failed to add chat:', error);
+                }
+            };
+
+            window.deleteChat = async function(id, key) {
+                try {
+                    const response = await fetch(`http://localhost:8080/api/v1/delete-chat?id=${id}&key=${key}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Error: ${response.statusText}`);
+                    }
+
+                    await loadChats(); // Đợi loadChats hoàn thành trước khi tiếp tục
+                    getHistory();
+
+                } catch (error) {
+                    console.error('Failed to delete chat:', error);
+                }
+            };
+
+            window.updateChat = async function(id, key) {
+                try {
+                    let text = "";
+                    if (key === "question") {
+                        const getText = document.getElementById("question" + id);
+                        text = getText.value;
+                    } else if (key === "answer") {
+                        const getText = document.getElementById("answer" + id);
+                        text = getText.value;
+                    }
+
+                    const response = await fetch(`http://localhost:8080/api/v1/update-chat?id=${id}&key=${key}&text=${text}`, {
+                        method: 'PUT'
+                    });
+                    if (!response.ok) {
+                        throw new Error(`Error: ${response.statusText}`);
+                    }
+
+                    await loadChats(); // Đợi loadChats hoàn thành trước khi tiếp tục
+                    getHistory();
+
+                } catch (error) {
+                    console.error('Failed to update chat:', error);
+                }
+            };
+
+            window.updateChat2 = async function(id, key) {
+                try {
+                    if (key === "answer") {
+                        const getQuestion = document.getElementById("question" + id);
+                        const getAnswer = document.getElementById("answer" + id);getAnswer.value = "Đang tìm câu trả lời ...";
+
+                        const response = await requestAgain(getQuestion.value);
+                        let result = await response.text();
+                        console.log(result);
+
+                        if(result != "" || result != null){
+                            const response = await fetch(`http://localhost:8080/api/v1/update-chat?id=${id}&key=${key}&text=${result}`, {
+                                method: 'PUT'
+                            });
+                            if (!response.ok) {
+                                throw new Error(`Error: ${response.statusText}`);
+                            }
+                            await loadChats(); // Đợi loadChats hoàn thành trước khi tiếp tục
+                            getHistory();
+
+                        }
+
+                    }
+                } catch (error) {
+                    console.error('Failed to update chat:', error);
+                }
+            };
+
+            loadChats();
+        });
+    </script>
+</div>

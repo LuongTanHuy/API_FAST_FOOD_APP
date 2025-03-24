@@ -1,0 +1,92 @@
+<div th:fragment="accountBody" class="app-content">
+    <div class="app-content-header">
+        <h1 class="app-content-headerText text-uppercase fst-italic fs-5">danh sách tài khoản</h1>
+    </div>
+    <div class="app-content-actions">
+        <form action="/FastFood/searchAccount" method="get">
+            <input class="search-bar" placeholder="Tìm kiếm..." name="search" type="text"/>
+        </form>
+
+    </div>
+    <!--Món ăn-->
+    <div class="table-responsive-xl ">
+        <table class="table table-borderless table-hover">
+            <thead>
+            <tr class="text-center">
+                <th scope="col" class="titleColor text-center">Ảnh</th>
+                <th scope="col" class="titleColor text-center">Thông tin </th>
+                <th scope="col" class="titleColor text-center">Đối tượng</th>
+                <th scope="col" class="titleColor text-center">Tổng đơn hàng đã mua</th>
+                <th scope="col" class="titleColor text-center">Tổng đơn hàng đã giao</th>
+                <th scope="col"class="titleColor text-center">Trạng thái</th>
+            </tr>
+            </thead>
+            <tbody class="table-group-divider align-middle">
+            <tr th:each="account: ${listAccount}">
+                <th class="rowColor" scope="row">
+                    <img alt="product" th:src="${account.image}"   style="width: 100px; height: 100px;border-radius: 5px"/>
+                </th>
+                <td class="rowColor fs-6" >
+                    <p class="text-start" th:text="'Tài Khoản: '+${account.username}"></p>
+                    <p class="text-start" th:text="'Email: '+${account.email}"></p>
+                    <p class="text-start" th:text="'Điện Thoại: '+${account.phone}"></p>
+                    <p class="text-start" th:text="'Ngày Tham Gia: '+${account.created_at}"></p>
+                    <p class="text-start" th:text="'Địa Chỉ: '+${account.address}"></p>
+                </td>
+                <td class="rowColor">
+                    <span th:if="${account.permission == '0'}">Người Dùng</span>
+                    <span th:if="${account.permission == '1'}">Quản Trị Viên</span>
+                    <span th:if="${account.permission == '2'}">Cửa Hàng</span>
+                    <span th:if="${account.permission == '3'}">Người Vận Chuyển</span>
+                </td>
+                <td class="rowColor">
+                    <span th:if="${account.permission == '0'}">
+                        <span th:text="${account.totalOrderBought}"></span>
+                    </span>
+                    <span th:if="${account.permission == '1'}">
+                        <span th:text="${account.totalOrderBought}"></span>
+                    </span>
+                    <span th:if="${account.permission == '2'}">
+                        <span th:text="${account.totalOrderBought}"></span>
+                    </span>
+                    <span th:if="${account.permission == '3'}">
+                        <span th:text="${account.totalOrderBought}"></span>
+                    </span>
+                </td>
+                <td class="rowColor">
+                    <span th:if="${account.permission == '0'}">. . .</span>
+                    <span th:if="${account.permission == '1'}">. . .</span>
+                    <span th:if="${account.permission == '2'}">. . .</span>
+                    <span th:if="${account.permission == '3'}">
+                        <span th:text="${account.totalOrderDelivered}"></span>
+                    </span>
+                </td>
+                <td class="rowColor">
+                    <div class="action d-flex justify-content-center align-items-center">
+                        <button type="button" class="btn btn-warning rounded-circle" data-bs-toggle="modal"
+                                data-bs-target="#exampleModal" style="display: inline-flex; padding: 8px 12px;">
+                            <a th:href="|lockOrUnlockAccount/${account.id}|" th:if="${account.status == 0}">
+                                <i class="fas fa-lock fa-sm" style="color:red"></i> </a>
+                            <a th:href="|lockOrUnlockAccount/${account.id}|" th:if="${account.status == 1}">
+                                <i class="fas fa-lock-open fa-sm" style="color:green"></i> </a>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="position-relative" th:if="${size != nul}">
+        <div class="btn-toolbar position-absolute top-100 start-50 translate-middle" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group me-2" role="group" aria-label="First group">
+                <button type="button" class="btn btn-primary" th:if="${page > 0}">
+                    <a th:href="|account?page=${page - 1}|" ><i class="fas fa-long-arrow-alt-left" style="color: #ffffff;"></i></a>
+                </button>
+                <button type="button" class="btn btn-primary"><span th:text="${page}"></span></button>
+                <button type="button" class="btn btn-primary" th:if="${page < totalPages - 1}">
+                    <a th:href="|account?page=${page + 1}|" ><i class="fas fa-long-arrow-alt-right" style="color: #ffffff;"></i></a>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

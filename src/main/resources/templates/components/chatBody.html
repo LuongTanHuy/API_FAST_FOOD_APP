@@ -1,0 +1,210 @@
+<div th:fragment="chatBody" class="app-contentt" style="background: #101827 !important;">
+    <div class="app-content-header">
+        <h1 class="app-content-headerText text-uppercase fst-italic fs-5" style="color: #ffffff !important;">Trò Chuyện</h1>
+    </div>
+
+    <div class="container bg-white text-dark rounded" style="max-height: 540px !important;">
+        <div class="d-flex align-items-start mt-4 mb-4" >
+            <div class="border hide-scrollbar rounded border-info" style="height: 500px; overflow-y: auto;width: 350px;margin-right: 20px">
+                <div  class="nav flex-column nav-pills gap-2 m-2" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <div th:each="customer : ${listCustomer}">
+                        <div class="customer-card" onclick="showChat(this)">
+                            <img th:src="${customer.image}" alt="Customer" >
+                            <div class="messageUser" th:data-st="${customer.idStore}" th:data-iacc="${customer.idAccount}" >
+                                <div class="customer-name" th:text="${customer.username}"></div>
+                                <p th:data-acc="${customer.idAccount}" class="fs-8 text-muted"></p>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="container border rounded border-info hide-scrollbar" style="height: 500px; overflow-y: auto;">
+                <div class="chat-container">
+
+                </div>
+            </div>
+
+        </div>
+        <div id="chat-question">
+            <input type="text" id="question" placeholder="Trả lời..." />
+            <button id="submit"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+    <script src="https://cdn.socket.io/4.5.3/socket.io.min.js"></script>
+
+    <script>
+        const socket = io('http://localhost:3000');
+
+        socket.on('receive_message', (data) => {
+            // console.log(data)
+            if(data.idAccount == idAccount){
+                appendMessage(data)
+            }else{
+                updateMessageContent(data)
+            }
+
+        });
+
+        let idAccount;
+        let idStore;
+        let ImageStore;
+        function showChat(element) {
+            idAccount = element.querySelector('.messageUser').getAttribute('data-iacc');
+            idStore = element.querySelector('.messageUser').getAttribute('data-st');
+            ImageStore = element.querySelector('.messageUser').getAttribute('image');
+
+            socket.emit('join_store', {userId: idStore});
+
+            refreshChatContainer();
+
+            // Gọi API lấy tin nhắn
+            fetchMessages(idAccount, idStore);
+        }
+
+        function updateMessageContent(data) {
+            const paragraphs = document.querySelectorAll('p[data-acc]');
+
+            paragraphs.forEach(paragraph => {
+                if (paragraph.getAttribute('data-acc') == data.idAccount) {
+                    // Cập nhật nội dung của thẻ <p>
+                    paragraph.innerHTML = `
+  <span style="color: #d93333;text-overflow: ellipsis;font-size: 14px;font-weight: bold;width: 130px;display: inline-block;overflow: hidden;white-space: nowrap;">
+    Tin nhắn: ${data.message}
+  </span>`;
+                }
+            });
+        }
+
+        function refreshChatContainer() {
+            const chatContainer = document.querySelector('.chat-container');
+            chatContainer.replaceChildren();
+        }
+        // Hàm thêm tin nhắn vào `chat-container`
+        function appendMessage(messageData) {
+            // Lấy container chat
+            const chatContainer = document.querySelector('.chat-container');
+
+            // Tạo thẻ tin nhắn
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('chat-message', messageData.sender === 'user' ? 'receiver' : 'sender');
+
+            // Thẻ ảnh đại diện
+            const img = document.createElement('img');
+            img.src = messageData.sender === 'user' ? messageData.imageUser :messageData.imageStore; // URL ảnh
+            img.alt = "avatar";
+            ImageStore = messageData.imageStore; // URL ảnh
+
+            // Thẻ nội dung tin nhắn
+            const messageContent = document.createElement('div');
+            messageContent.classList.add('message-content');
+            messageContent.textContent = messageData.message;
+
+            // Thẻ thời gian
+            const messageTime = document.createElement('div');
+            messageTime.classList.add( messageData.sender === 'user' ? 'message-timeReceive' : 'message-timeSend');
+            messageTime.textContent = messageData.time;
+
+            // Gắn thời gian vào nội dung tin nhắn
+            messageContent.appendChild(messageTime);
+
+            // Gắn các thành phần vào `messageDiv`
+            if (messageData.sender === 'user') {
+                // Nếu là người gửi, ảnh nằm bên phải
+                messageDiv.appendChild(img);
+                messageDiv.appendChild(messageContent);
+            } else {
+                // Nếu là người nhận, ảnh nằm bên trái
+                messageDiv.appendChild(messageContent);
+                messageDiv.appendChild(img);
+            }
+
+            // Gắn tin nhắn vào container
+            chatContainer.appendChild(messageDiv);
+
+            // Cuộn xuống cuối container
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        // Hàm gọi API và hiển thị tin nhắn
+        async function fetchMessages(idAccount, idStore) {
+            try {
+                const requestBody = {idAccount, idStore,typeMessage:"Web"};
+                const response = await fetch('http://localhost:8080/api/v1/historyChat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody),
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch messages');
+
+                const messages = await response.json();
+                // console.log(messages);
+                if (messages.length > 0) {
+                    messages.forEach(messageData => appendMessage(messageData));
+                } else {
+                    console.warn('No messages found for this chat');
+                }
+
+                if(messages[messages.length - 1] != 0){
+                    notification(messages[messages.length - 1].idAccount,messages[messages.length - 1].message)
+                }
+
+            } catch (error) {
+                console.error('Error fetching messages:', error);
+            }
+        }
+
+        function notification(accountId,messageData) {
+            const paragraphs = document.querySelectorAll('p[data-acc]');
+            paragraphs.forEach(paragraph => {
+                if (paragraph.getAttribute('data-acc') == accountId) {
+                    // Cập nhật nội dung của thẻ <p>
+                    paragraph.innerHTML = "Tin nhắn: "+messageData;
+                }
+            });
+        }
+
+        const now = new Date();
+
+        // Lấy từng thành phần
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+
+        // Ghép các thành phần thành chuỗi
+        const formattedTime = `${hours}:${minutes} ${day}--${month}-${year}`;
+
+        // Gửi tin nhắn mới khi nhấn nút gửi
+        document.getElementById('submit').addEventListener('click', async () => {
+            const input = document.getElementById('question');
+            const message = input.value;
+
+            if (message) {
+                appendMessage({
+                    time: formattedTime,
+                    message: message,
+                    typeMessage: "text",
+                    sender: "store",
+                    imageStore: ImageStore
+                });
+
+                socket.emit('send_message',{
+                    time: formattedTime,
+                    message: message,
+                    typeMessage: "text",
+                    idAccount: idAccount,
+                    idStore: idStore,
+                    sender: "store",
+                    receiver: idAccount
+                });
+                input.value = '';
+            }
+        });
+
+    </script>
+
+</div>

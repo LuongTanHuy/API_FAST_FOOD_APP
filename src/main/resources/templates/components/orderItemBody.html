@@ -1,0 +1,107 @@
+<div th:fragment="orderItemBody" class="app-content">
+    <div class="app-content-header">
+        <h1 class="app-content-headerText text-uppercase fst-italic fs-5">Quản Lí Đơn Hàng</h1>
+    </div>
+
+    <div class="app-content-actions">
+        <!--        <input class="search-bar" placeholder="Search..." type="text" />-->
+
+    </div>
+    <!-- Default dropright button -->
+    <div class="col-md-1 btn-group dropend" style="margin-bottom: 10px;">
+        <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            Trạng Thái Đơn Hàng
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item dropdown-item-custom" href="/FastFood/orderItem" ><i class="fas fa-folder-open" style="color: #e2f306;" ></i> <span style="margin-left: 10px;" >Đơn Mới</span></a></li>
+            <li><a class="dropdown-item dropdown-item-custom" href="/FastFood/shippingOrderItem"><i class="fas fa-shipping-fast" style="color: #b907ff"  ></i> <span style="margin-left: 8px;" >Đang Giao</span> </a></li>
+            <li><a class="dropdown-item dropdown-item-custom" href="/FastFood/finishOrderItem"><i class="fas fa-thumbs-up" style="color: #03a50c" ></i> <span style="margin-left: 12px;" >Đã Giao</span></a></li>
+            <li><a class="dropdown-item dropdown-item-custom" href="/FastFood/cancelOrderItem"> <i class="fas fa-calendar-times" style="color: #ff0505" ></i> <span style="margin-left: 13px;" >Hủy Đơn</span></a></li>
+        </ul>
+    </div>
+    <!--Món ăn-->
+    <div class="table-responsive-xl" style="margin-top: 20px" >
+        <table class="table table-hover table-borderless fs-6" >
+            <thead>
+            <tr class="text-center">
+                <th scope="col " class="titleColor">Khách Hàng</th>
+                <th scope="col" class="titleColor"></th>
+                <th scope="col" class="titleColor">Đơn Hàng</th>
+                <th scope="col" class="titleColor">Tình Trạng</th>
+                <th scope="col" class="titleColor">Xử Lí</th>
+
+            </tr>
+            </thead>
+            <tbody class="table-group-divider align-middle ">
+            <tr th:each="orderItem: ${listOderItem}">
+                <th class="rowColor fs-6" scope="row" >
+                    <p class="text-start" th:text="${'Tên: '+orderItem.orderModel.accountModel.username}"></p>
+                    <p class="text-start" th:text="${'Địa chỉ: '+orderItem.orderModel.accountModel.address}"></p>
+                    <p class="text-start" th:text="${'Điện thoại: '+orderItem.orderModel.accountModel.phone}"></p>
+
+                </th>
+                <td class="rowColor"><img class="account-image" th:src="${orderItem.productModel.image}"></td>
+                <td class="rowColor fs-6" >
+                    <p class="text-start" th:text="${'Sản phẩm: '+orderItem.productModel.name}"></p>
+                    <p class="text-start" th:text="${'Số lượng: x'+orderItem.quantity}"></p>
+                    <p class="text-start" th:text="${'Giá: '+orderItem.price}+'00 VNĐ'"></p>
+                    <p class="text-start" th:text="${'Ngày mua: '+orderItem.orderModel.created_at}"></p>
+                </td>
+                <td class="rowColor fs-6">
+                    <span
+                            th:if="${orderItem.orderModel.status} == '1'">Chưa Thanh Toán
+                    </span>
+                    <span
+                            th:if="${orderItem.orderModel.status} == '2'">Đang Giao
+                    </span>
+                    <span
+                            th:if="${orderItem.orderModel.status} == '3'">Đã Thanh Toán
+                    </span>
+                    <span
+                            th:if="${orderItem.orderModel.status} == '4'">Đã Hủy
+                    </span>
+                </td>
+                <td class="rowColor fs-6">
+                    <div th:if="${orderItem.orderModel.status} == '1'">
+                        <div class="action" style="display: flex;flex-direction: column;justify-content: center">
+                            <form action="/FastFood/changeStatus" method="post">
+                                <input hidden="hidden" th:value="${orderItem.orderModel.id}" name="id_order">
+                                <input hidden="hidden" value="2" name="status">
+                                <button type="submit" class="btn btn-success" style="width: 92px;" >
+                                    <i class="bi bi-check2-circle" style="color:#ffffff; ">
+                                        <span style="font-style: normal">Nhận</span>
+                                    </i>
+                                </button>
+                            </form>
+
+                            <form action="/FastFood/changeStatus" method="post" style="margin-top: 10px">
+                                <input hidden="hidden" th:value="${orderItem.orderModel.id}" name="id_order">
+                                <input hidden="hidden" value="4" name="status">
+                                <button type="submit" class="btn btn-danger"  >
+                                    <i class="bi bi-x-circle">
+                                        <span style="font-style: normal;" >Không</span>
+                                    </i>
+                                </button>
+                            </form>
+
+                        </div>
+                    </div>
+                    <span th:if="${orderItem.orderModel.status} == '2'">
+                        Vui Lòng Chờ
+                    </span>
+                    <span th:if="${orderItem.orderModel.status} == '3'">
+                        <span>Đã Giao</span><br/>
+                        <span th:text="${orderItem.orderModel.receive_at}"></span>
+                    </span>
+                    <span th:if="${orderItem.orderModel.status} == '4'">
+                        <span th:text="${orderItem.orderModel.receive_at}"></span>
+                    </span>
+
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+
+    </div>
+</div>

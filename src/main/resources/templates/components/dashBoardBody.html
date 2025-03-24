@@ -1,0 +1,92 @@
+<div th:fragment="dashBoardBody" class="app-content" style=" background-color: #101827;">
+    <div class="app-content-header">
+        <h1 class="app-content-headerText text-uppercase fst-italic fs-5" style="color: #ffffff">Thống Kê Doanh Thu</h1>
+    </div>
+    <div class="app-content-actions"> </div>
+
+    <div style="display: flex;flex-direction:row;justify-content: space-evenly;">
+        <div class="col-7" style="width: 900px;height: 520px;text-align: center; background-color: #f8f8f8; border-radius: 10px;">
+            <canvas id="months"></canvas>
+            <h5 style="padding: 20px;color: #777">Doanh Thu Từng Tháng Tính Theo Năm</h5>
+        </div>
+        <div class="col-5" style="width: 400px;height: 400px;text-align: center">
+            <canvas id="order"></canvas>
+            <h5 style="padding: 20px;color: #ffffff">Đơn Hàng</h5>
+        </div>
+    </div>
+    <!-- Form -->
+    <div class="col-12" style="display:flex;flex-direction:row;justify-content:space-evenly">
+        <form action="/FastFood/dashboard2" method="get"  style="width: 200px;height: 100px;justify-content: center;align-content: center">
+            <select name="year">
+                <option th:each="year : ${years}" th:value="${year}" th:text="${year}"></option>
+            </select>
+            <button class="bt"> <input type="submit"/> <i class="fas fa-eye fa-sm" style="margin-left: 2px;" ></i></button>
+        </form>
+    </div>
+
+    <!--Months-->
+    <script th:inline="javascript">
+        const months = document.getElementById('months');
+        var priceOrder = /*[[${priceOrder}]]*/ [];
+        new Chart(months, {
+            type: 'bar',
+            data: {
+                labels: [
+                    'Tháng 1',
+                    'Tháng 2',
+                    'Tháng 3',
+                    'Tháng 4',
+                    'Tháng 5',
+                    'Tháng 6',
+                    'Tháng 7',
+                    'Tháng 8',
+                    'Tháng 9',
+                    'Tháng 10',
+                    'Tháng 11',
+                    'Tháng 12',],
+                datasets: [{
+                    label: 'Tổng Doanh Thu Các Mặt Hàng',
+                    data: priceOrder,
+                    fill: false,
+                    backgroundColor:
+                        [
+                            'rgb(22,113,215)',
+                            'rgb(93,215,22)',
+                            'rgb(215,22,22)',
+                            'rgb(167,22,215)',
+                            'rgb(246,20,201)',
+                            'rgb(241,124,7)',
+                        ],
+                    tension: 0
+                }]
+            },
+        });
+    </script>
+
+    <!--order-->
+    <script th:inline="javascript">
+        const order = document.getElementById('order');
+        var quantityOrder = /*[[${quantityOrder}]]*/ [];
+        new Chart(order, {
+            type: 'doughnut',
+            data: {
+                labels: [
+                    'Đơn Mới',
+                    'Đang Giao',
+                    'Đã Giao',
+                    'Đã Hủy'
+                ],
+                datasets: [{
+                    data: quantityOrder,
+                    backgroundColor: [
+                        'rgb(255, 99, 132)',
+                        'rgb(54, 162, 235)',
+                        'rgb(255, 205, 86)',
+                        'rgb(98,218,30)'
+                    ],
+                    hoverOffset: 4
+                }]
+            },
+        });
+    </script>
+</div>
